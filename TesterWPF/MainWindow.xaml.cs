@@ -26,8 +26,6 @@ namespace TesterWPF
     private void QuitButton_Click(object sender, RoutedEventArgs e)
     {
       m_sm1.Transit();
-
-      Application.Current.Shutdown();
     }
 
     void StateContext1.Notification.OnInit()
@@ -35,6 +33,8 @@ namespace TesterWPF
       StartButton.IsEnabled   = true;
       StopButton.IsEnabled    = false;
       QuitButton.IsEnabled    = true;
+
+      WorkerProgressBar.Value = 0;
     }
 
     void StateContext1.Notification.OnStarted()
@@ -42,6 +42,8 @@ namespace TesterWPF
       StartButton.IsEnabled   = false;
       StopButton.IsEnabled    = true;
       QuitButton.IsEnabled    = true;
+
+      WorkerProgressBar.Value = 0;
     }
 
     void StateContext1.Notification.OnStopped()
@@ -49,14 +51,18 @@ namespace TesterWPF
       StartButton.IsEnabled   = false;
       StopButton.IsEnabled    = false;
       QuitButton.IsEnabled    = true;
-    }
 
-    void StateContext1.Notification.OnProgressed(int percentage)
-    {
+      WorkerProgressBar.Value = 0;
     }
 
     void StateContext1.Notification.OnQuit()
     {
+      Application.Current.Shutdown();
+    }
+
+    void StateContext1.Notification.OnProgressed(int percentage)
+    {
+      WorkerProgressBar.Value = percentage;
     }
   }
 }

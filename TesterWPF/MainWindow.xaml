@@ -5,6 +5,7 @@
     <Grid Width="220">
         <Button Content="Start" Height="49" HorizontalAlignment="Left" Margin="39,12,0,0" Name="StartButton" VerticalAlignment="Top" Width="140" Click="StartButton_Click" />
         <Button Content="Stop" Height="49" HorizontalAlignment="Left" Margin="39,79,0,0" Name="StopButton" VerticalAlignment="Top" Width="140" Click="StopButton_Click" />
-        <Button Content="Quit" Height="49" HorizontalAlignment="Left" Margin="39,227,0,0" Name="QuitButton" VerticalAlignment="Top" Width="140" Click="QuitButton_Click" />
+        <Button Content="Quit" Height="49" HorizontalAlignment="Left" Margin="39,202,0,0" Name="QuitButton" VerticalAlignment="Top" Width="140" Click="QuitButton_Click" />
+        <ProgressBar Height="17" HorizontalAlignment="Left" Margin="0,278,0,0" Name="WorkerProgressBar" VerticalAlignment="Top" Width="218" />
     </Grid>
 </Window>

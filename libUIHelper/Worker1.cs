@@ -39,11 +39,11 @@ namespace libUIHelper
     {
       BackgroundWorker worker = sender as BackgroundWorker;
 
-      int SleepTimeMilliSec = m_random.Next(3) * 1000, i = 0;
+      int SleepTimeMilliSec = m_random.Next(1, 3) * 1000, i = 0;
       while (SleepTimeMilliSec >= i)
       {
         i += 100;
-        System.Threading.Thread.Sleep(i);
+        System.Threading.Thread.Sleep(100);
 
         int percentComplete = (int)((float)i / (float)SleepTimeMilliSec * 100);
         worker.ReportProgress(percentComplete);
