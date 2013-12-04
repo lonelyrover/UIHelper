@@ -13,19 +13,14 @@ namespace TesterWPF
       m_sm1 = new StateContext1(this);
     }
 
-    private void StartButton_Click(object sender, RoutedEventArgs e)
+    private void Button_Click(object sender, RoutedEventArgs e)
     {
       m_sm1.Transit();
     }
 
-    private void StopButton_Click(object sender, RoutedEventArgs e)
+    private void ButtonQuit_Click(object sender, RoutedEventArgs e)
     {
-      m_sm1.Transit();
-    }
-
-    private void QuitButton_Click(object sender, RoutedEventArgs e)
-    {
-      m_sm1.Transit();
+      m_sm1.TransitToFinal();
     }
 
     void StateContext1.Notification.OnInit()

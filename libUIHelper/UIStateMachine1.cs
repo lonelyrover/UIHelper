@@ -6,16 +6,27 @@ namespace libUIHelper
   {
     public abstract class State
     {
-      private AutoResetEvent m_waitEvent = new AutoResetEvent(false);
+      private State m_nextState = null;
 
-      public void Wait()
+      protected bool TransitPending()
       {
-        m_waitEvent.WaitOne();
+        return m_nextState != null;
       }
 
-      protected void Signal()
+      protected bool TryTransit(State nextState)
       {
-        m_waitEvent.Set();
+        if (null == m_nextState)
+        {
+          m_nextState = nextState;
+          return true;
+        }
+
+        return false;
+      }
+
+      protected void FinalizeTransit()
+      {
+        m_nextState = null;
       }
 
       abstract public void Transit();
@@ -39,7 +50,7 @@ namespace libUIHelper
       public StateContext1(Notification notiTarget)
       {
         m_notiTarget = notiTarget;
-        SetState(new StateInitial(this));
+        new StateInitial(this);
       }
 
       public void SetState(State state)
@@ -64,17 +75,20 @@ namespace libUIHelper
         public StateInitial(StateContext1 context)
         {
           m_context = context;
+          m_context.SetState(this);
           m_context.m_notiTarget.OnInit();
         }
 
         public override void Transit()
         {
-          m_context.SetState(new StateStarted(m_context));
+          if (!TransitPending())
+            TryTransit(new StateStarted(m_context));
         }
 
         public override void TransitToFinal()
         {
-          m_context.SetState(new StateFinal(m_context));
+          if (!TransitPending())
+            TryTransit(new StateFinal(m_context));
         }
       }
 
@@ -90,14 +104,14 @@ namespace libUIHelper
 
         public override void Transit()
         {
-          base.Wait();
-          m_context.SetState(new StateStopped(m_context));
+          if (!TransitPending())
+            TryTransit(new StateStopped(m_context));
         }
 
         public override void TransitToFinal()
         {
-          base.Wait();
-          m_context.SetState(new StateFinal(m_context));
+          if (!TransitPending())
+            TryTransit(new StateFinal(m_context));
         }
 
         void Worker1.Notification.Progressed(int percentage)
@@ -107,7 +121,8 @@ namespace libUIHelper
 
         void Worker1.Notification.Completed()
         {
-          base.Signal();
+          FinalizeTransit();
+          m_context.SetState(this);
           m_context.m_notiTarget.OnStarted();
         }
       }
@@ -124,14 +139,14 @@ namespace libUIHelper
 
         public override void Transit()
         {
-          base.Wait();
-          m_context.SetState(new StateFinal(m_context));
+          if (!TransitPending())
+            TryTransit(new StateFinal(m_context));
         }
 
         public override void TransitToFinal()
         {
-          base.Wait();
-          m_context.SetState(new StateFinal(m_context));
+          if (!TransitPending())
+            TryTransit(new StateFinal(m_context));
         }
 
         void Worker1.Notification.Progressed(int percentage)
@@ -141,7 +156,8 @@ namespace libUIHelper
 
         void Worker1.Notification.Completed()
         {
-          base.Signal();
+          FinalizeTransit();
+          m_context.SetState(this);
           m_context.m_notiTarget.OnStopped();
         }
       }
@@ -158,12 +174,10 @@ namespace libUIHelper
 
         public override void Transit()
         {
-          base.Wait();
         }
 
         public override void TransitToFinal()
         {
-          base.Wait();
         }
 
         void Worker1.Notification.Progressed(int percentage)
@@ -173,7 +187,7 @@ namespace libUIHelper
 
         void Worker1.Notification.Completed()
         {
-          base.Signal();
+          m_context.SetState(this);
           m_context.m_notiTarget.OnQuit();
         }
       }
